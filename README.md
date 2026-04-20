@@ -21,8 +21,21 @@
 
 ## ⚡ Usage
 
+### Ligne de commande
+
 ```bash
 ./reels.sh "/chemin/vers/podcast.mp4"
+```
+
+### Interface web (macOS)
+
+Le fichier **`launch_webapp.command`** est à la **racine du projet** (ex. `~/gztp/launch_webapp.command`). Double-clique dessus dans le Finder (première fois : clic droit → Ouvrir, si macOS bloque). Ça lance le serveur Flask et la page drag-and-drop.
+
+Sans Finder :
+
+```bash
+cd ~/gztp   # ou le chemin où tu as cloné le repo
+./launch_webapp.command
 ```
 
 Astuce: glisse-dépose ton fichier dans le terminal pour insérer le chemin.

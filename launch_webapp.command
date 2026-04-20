@@ -1,9 +1,10 @@
 #!/bin/bash
-# Launcher Reels Generator - double-clic pour démarrer la webapp.
+# Launcher Reels Generator — double-clic pour démarrer la webapp.
+# Fonctionne quel que soit l’emplacement du dossier (~/gztp, etc.).
 set -e
 
-PROJECT_DIR="/Users/kokabuildsf/French Class /GZTP"
-cd "$PROJECT_DIR"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+cd "$SCRIPT_DIR"
 
 clear
 cat <<'BANNER'
@@ -16,8 +17,9 @@ cat <<'BANNER'
 BANNER
 
 if [ ! -d "venv312" ]; then
-  echo "ERREUR : venv312 introuvable dans $PROJECT_DIR"
+  echo "ERREUR : venv312 introuvable dans $SCRIPT_DIR"
   echo "Crée d'abord l'environnement avec :"
+  echo "  cd \"$SCRIPT_DIR\""
   echo "  python3.12 -m venv venv312 && source venv312/bin/activate && pip install -r requirements.txt && pip install flask"
   read -n 1 -s -r -p "Appuie sur une touche pour fermer..."
   exit 1
