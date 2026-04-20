@@ -27,16 +27,25 @@
 ./reels.sh "/chemin/vers/podcast.mp4"
 ```
 
-### Interface web (macOS)
+### Interface web (navigateur, drag-and-drop)
 
-Le fichier **`launch_webapp.command`** est à la **racine du projet** (ex. `~/gztp/launch_webapp.command`). Double-clique dessus dans le Finder (première fois : clic droit → Ouvrir, si macOS bloque). Ça lance le serveur Flask et la page drag-and-drop.
+Le lanceur principal est **`start_webapp.sh`** à la racine. Les fichiers **`.command`** (macOS) appellent ce script.
 
-Sans Finder :
+| Fichier | Rôle |
+|--------|------|
+| **`start_webapp.sh`** | Script principal — `./start_webapp.sh` dans le terminal |
+| **`launch_webapp.command`** | Double-clic dans le Finder |
+| **`LANCER_WEBAPP.command`** | Idem, nom souvent plus visible dans le Finder |
+
+Si un fichier « manque » : vérifie que tu es dans le clone (`git clone https://github.com/LdwS123/gztp.git`) puis `git pull`.
 
 ```bash
-cd ~/gztp   # ou le chemin où tu as cloné le repo
-./launch_webapp.command
+cd ~/gztp
+chmod +x start_webapp.sh launch_webapp.command LANCER_WEBAPP.command
+./start_webapp.sh
 ```
+
+Sans script : `source venv312/bin/activate && python3 webapp.py`
 
 Astuce: glisse-dépose ton fichier dans le terminal pour insérer le chemin.
 
