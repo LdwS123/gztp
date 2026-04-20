@@ -19,16 +19,18 @@ if [ ! -d "venv312" ]; then
   echo "ERREUR : venv312 introuvable dans $SCRIPT_DIR"
   echo "Crée l'environnement :"
   echo "  cd \"$SCRIPT_DIR\""
-  echo "  python3.12 -m venv venv312 && source venv312/bin/activate && pip install -r requirements.txt && pip install flask"
+  echo "  python3.12 -m venv venv312 && source venv312/bin/activate && python3 -m pip install -r requirements.txt && python3 -m pip install flask"
   read -n 1 -s -r -p "Entrée pour fermer..." _
   exit 1
 fi
 
 source venv312/bin/activate
+# Toujours préférer python -m pip (le binaire pip n'est pas toujours dans le PATH)
+export PATH="$SCRIPT_DIR/venv312/bin:$PATH"
 
 if ! python3 -c "import flask" 2>/dev/null; then
   echo "Installation de Flask..."
-  pip install flask
+  python3 -m pip install flask
 fi
 
 if ! curl -s http://localhost:11434/api/tags >/dev/null 2>&1; then
