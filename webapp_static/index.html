@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Reels Generator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #07070a;
+  --bg-2: #0e0d14;
+  --panel: #131220;
+  --panel-2: #1a1828;
+  --border: #232133;
+  --text: #f4f1ff;
+  --text-dim: #8783a3;
+  --accent: #b9ff66;
+  --accent-2: #ff2d8a;
+  --accent-3: #6b7cff;
+  --danger: #ff5c5c;
+  --radius: 16px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(ellipse 80% 50% at 30% 0%, rgba(185, 255, 102, 0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 100%, rgba(255, 45, 138, 0.06) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+main {
+  position: relative;
+  z-index: 1;
+  max-width: 1340px;
+  margin: 0 auto;
+  padding: 56px 32px 120px;
+}
+
+/* ─── Header ─── */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 64px;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  font-size: 18px;
+}
+.brand-mark {
+  width: 32px; height: 32px;
+  border-radius: 9px;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+  position: relative;
+}
+.brand-mark::after {
+  content: '▶';
+  position: absolute; inset: 0;
+  display: grid; place-items: center;
+  color: var(--bg);
+  font-size: 12px;
+  margin-left: 2px;
+}
+.header-meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+/* ─── Hero ─── */
+.hero {
+  text-align: left;
+  margin-bottom: 56px;
+  max-width: 920px;
+}
+.hero h1 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(56px, 9vw, 128px);
+  font-weight: 700;
+  line-height: 0.92;
+  letter-spacing: -0.04em;
+  margin-bottom: 28px;
+}
+.hero h1 .accent {
+  background: linear-gradient(120deg, var(--accent) 0%, var(--accent-3) 50%, var(--accent-2) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  font-style: italic;
+}
+.hero p {
+  font-size: clamp(17px, 1.6vw, 22px);
+  color: var(--text-dim);
+  max-width: 620px;
+  font-weight: 400;
+}
+.hero p strong { color: var(--text); font-weight: 600; }
+
+/* ─── Drop zone ─── */
+.dropzone-wrap {
+  position: relative;
+}
+
+.dropzone {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  padding: 80px 40px;
+  border: 1.5px dashed var(--border);
+  border-radius: 24px;
+  background: linear-gradient(180deg, rgba(19, 18, 32, 0.6) 0%, rgba(7, 7, 10, 0.6) 100%);
+  backdrop-filter: blur(20px);
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  min-height: 360px;
+  text-align: center;
+}
+.dropzone:hover {
+  border-color: var(--accent);
+  background: linear-gradient(180deg, rgba(185, 255, 102, 0.04) 0%, rgba(7, 7, 10, 0.6) 100%);
+  transform: translateY(-2px);
+}
+.dropzone.dragging {
+  border-color: var(--accent);
+  border-style: solid;
+  background: linear-gradient(180deg, rgba(185, 255, 102, 0.08) 0%, rgba(107, 124, 255, 0.04) 100%);
+  transform: scale(1.005);
+  box-shadow: 0 0 80px rgba(185, 255, 102, 0.2);
+}
+.drop-icon {
+  width: 80px; height: 80px;
+  border-radius: 20px;
+  background: rgba(185, 255, 102, 0.06);
+  border: 1px solid rgba(185, 255, 102, 0.2);
+  display: grid; place-items: center;
+  font-size: 32px;
+  transition: transform 0.3s;
+}
+.dropzone:hover .drop-icon,
+.dropzone.dragging .drop-icon { transform: scale(1.1) rotate(-4deg); }
+.dropzone .title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.dropzone .subtitle {
+  color: var(--text-dim);
+  font-size: 15px;
+  max-width: 440px;
+}
+.dropzone .browse {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: var(--text);
+  color: var(--bg);
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 14px;
+  margin-top: 4px;
+  transition: transform 0.2s;
+}
+.dropzone:hover .browse { transform: scale(1.03); }
+
+#fileinput { display: none; }
+
+/* ─── Settings row ─── */
+.settings {
+  display: flex;
+  gap: 16px;
+  margin: 28px 0 0;
+  padding: 16px 24px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.setting {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--text-dim);
+}
+.setting label { font-weight: 500; }
+.setting input {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 6px 12px;
+  border-radius: 8px;
+  width: 70px;
+  font: inherit;
+  font-weight: 600;
+  text-align: center;
+}
+.setting input:focus { outline: none; border-color: var(--accent); }
+.settings-note {
+  margin-left: auto;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+/* ─── Progress panel ─── */
+.progress-panel {
+  margin-top: 32px;
+  padding: 32px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  display: none;
+}
+.progress-panel.active { display: block; animation: slideIn 0.4s ease-out; }
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 24px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.progress-step {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.progress-step .video-name {
+  color: var(--text-dim);
+  font-size: 14px;
+  font-weight: 500;
+  font-family: 'JetBrains Mono', monospace;
+  margin-left: 8px;
+}
+.progress-meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: var(--text-dim);
+}
+.progress-bar {
+  height: 8px;
+  background: var(--bg);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent) 0%, var(--accent-3) 50%, var(--accent-2) 100%);
+  background-size: 200% 100%;
+  border-radius: 4px;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: shimmer 2s linear infinite;
+}
+@keyframes shimmer {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
+.steps-list {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+.step-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  font-size: 12px;
+  color: var(--text-dim);
+  font-weight: 500;
+}
+.step-chip.done { color: var(--accent); border-color: rgba(185, 255, 102, 0.3); }
+.step-chip.current {
+  color: var(--text);
+  border-color: var(--accent);
+  background: rgba(185, 255, 102, 0.06);
+  box-shadow: 0 0 12px rgba(185, 255, 102, 0.15);
+}
+.step-chip-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.step-chip.current .step-chip-dot { animation: pulse 1.2s ease-in-out infinite; }
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(1.4); }
+}
+
+.log-window {
+  background: #050507;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 18px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11.5px;
+  color: var(--text-dim);
+  max-height: 200px;
+  overflow-y: auto;
+  line-height: 1.6;
+}
+.log-window::-webkit-scrollbar { width: 6px; }
+.log-window::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+.log-line { white-space: pre-wrap; word-break: break-word; }
+.log-line.highlight { color: var(--accent); }
+
+/* ─── Results ─── */
+.results {
+  margin-top: 64px;
+  display: none;
+}
+.results.active { display: block; animation: slideIn 0.4s ease-out; }
+.results-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.results-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 36px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.results-title .count { color: var(--accent); font-style: italic; }
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  border: none;
+  font-family: inherit;
+  transition: all 0.2s;
+  text-decoration: none;
+  color: inherit;
+}
+.btn-primary {
+  background: var(--accent);
+  color: var(--bg);
+}
+.btn-primary:hover { background: #c8ff7a; transform: translateY(-1px); }
+.btn-ghost {
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+.btn-ghost:hover { border-color: var(--accent); }
+
+.clip-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+}
+.clip {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  overflow: hidden;
+  transition: transform 0.25s, border-color 0.25s;
+  position: relative;
+}
+.clip:hover {
+  transform: translateY(-4px);
+  border-color: var(--accent);
+}
+.clip-video-wrap {
+  position: relative;
+  aspect-ratio: 9 / 16;
+  background: #000;
+  overflow: hidden;
+}
+.clip-video-wrap video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.clip-hook-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  text-align: center;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.6) 100%);
+  transition: opacity 0.3s;
+}
+.clip-video-wrap:hover .clip-hook-overlay { opacity: 0; }
+.clip-hook {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: clamp(20px, 2.4vw, 28px);
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  color: #fff;
+  text-shadow:
+    0 2px 8px rgba(0,0,0,0.8),
+    0 4px 24px rgba(0,0,0,0.6);
+}
+.clip-meta {
+  position: absolute;
+  top: 12px; left: 12px; right: 12px;
+  display: flex;
+  justify-content: space-between;
+  pointer-events: none;
+  z-index: 2;
+}
+.clip-badge {
+  background: rgba(7, 7, 10, 0.85);
+  backdrop-filter: blur(8px);
+  padding: 4px 10px;
+  border-radius: 100px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--text);
+  font-weight: 500;
+}
+.clip-badge.score { color: var(--accent); }
+.clip-info {
+  padding: 18px 20px 20px;
+}
+.clip-caption {
+  color: var(--text-dim);
+  font-size: 13.5px;
+  margin-bottom: 12px;
+  line-height: 1.45;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.clip-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 14px;
+}
+.clip-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--accent-3);
+  font-weight: 500;
+}
+.clip-actions {
+  display: flex;
+  gap: 8px;
+}
+.clip-action {
+  flex: 1;
+  text-align: center;
+  padding: 8px 10px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-dim);
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+.clip-action:hover { color: var(--accent); border-color: var(--accent); }
+
+/* ─── Error ─── */
+.error-banner {
+  margin-top: 32px;
+  padding: 20px 24px;
+  background: rgba(255, 92, 92, 0.06);
+  border: 1px solid rgba(255, 92, 92, 0.3);
+  border-radius: 14px;
+  color: var(--danger);
+  display: none;
+}
+.error-banner.active { display: block; }
+.error-banner strong { display: block; margin-bottom: 4px; }
+
+/* ─── Toast ─── */
+.toast {
+  position: fixed;
+  bottom: 32px; left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: var(--text);
+  color: var(--bg);
+  padding: 14px 24px;
+  border-radius: 100px;
+  font-weight: 600;
+  font-size: 14px;
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 100;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ─── Responsive ─── */
+@media (max-width: 720px) {
+  main { padding: 32px 20px 80px; }
+  .header { margin-bottom: 32px; }
+  .hero { margin-bottom: 32px; }
+  .dropzone { padding: 48px 24px; min-height: 280px; }
+  .dropzone .title { font-size: 22px; }
+  .progress-panel, .results { margin-top: 24px; }
+  .progress-panel { padding: 20px; }
+  .progress-step { font-size: 18px; }
+  .results-title { font-size: 26px; }
+}
+</style>
+</head>
+<body>
+<main>
+  <header class="header">
+    <div class="brand">
+      <div class="brand-mark"></div>
+      Reels Generator
+    </div>
+    <div class="header-meta">v3 · viral arcs · trash hooks · EN-only · local</div>
+  </header>
+
+  <section class="hero">
+    <h1>Drop a podcast.<br>Get <span class="accent">viral clips.</span></h1>
+    <p>
+      Pipeline 100% local, optimisé <strong>anglais uniquement</strong> :
+      <strong>WhisperX small.en</strong> transcrit (langue verrouillée &rarr; +30%
+      vitesse), des arcs viraux sont détectés autour des pics audio, un
+      <strong>LLM</strong> juge et écrit des hooks brutaux en anglais US.
+      Sortie 9:16 prête pour CapCut.
+    </p>
+  </section>
+
+  <div class="dropzone-wrap">
+    <div class="dropzone" id="dropzone">
+      <div class="drop-icon">⬆</div>
+      <div>
+        <div class="title">Glisse ta vidéo ici</div>
+        <div class="subtitle">.mp4 · .mov · .mkv — jusqu'à 4 GB. Tout reste sur ta machine.</div>
+      </div>
+      <span class="browse">Choisir un fichier →</span>
+    </div>
+    <input type="file" id="fileinput" accept="video/*" />
+
+    <div class="settings">
+      <div class="setting">
+        <label for="max-clips">Clips</label>
+        <input type="number" id="max-clips" min="1" max="20" value="8" />
+      </div>
+      <div class="setting">
+        <label for="max-len">Durée max (s)</label>
+        <input type="number" id="max-len" min="15" max="180" value="90" />
+      </div>
+      <div class="settings-note">qwen2.5:7b · viral arcs ON · trash hooks ON</div>
+    </div>
+  </div>
+
+  <div class="progress-panel" id="progress-panel">
+    <div class="progress-header">
+      <div class="progress-step" id="progress-step">
+        <span id="progress-step-label">Démarrage…</span>
+        <span class="video-name" id="video-name"></span>
+      </div>
+      <div class="progress-meta" id="progress-meta">0% · 0s</div>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-bar-fill" id="progress-bar-fill" style="width: 0%"></div>
+    </div>
+    <div class="steps-list" id="steps-list"></div>
+    <div class="log-window" id="log-window"></div>
+  </div>
+
+  <div class="error-banner" id="error-banner">
+    <strong>Une erreur est survenue</strong>
+    <span id="error-message"></span>
+  </div>
+
+  <div class="results" id="results">
+    <div class="results-header">
+      <div class="results-title"><span class="count" id="results-count">0</span> clips prêts</div>
+      <div style="display:flex; gap: 12px;">
+        <button class="btn btn-ghost" id="btn-new">↺ Nouvelle vidéo</button>
+        <button class="btn btn-primary" id="btn-export">↓ Exporter sur le Desktop</button>
+      </div>
+    </div>
+    <div class="clip-grid" id="clip-grid"></div>
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const STEPS = [
+  'Transcription',
+  'Analyse audio',
+  'Détection clips',
+  'LLM judge',
+  'Génération hooks',
+  'Rendu vidéo',
+  'Terminé',
+];
+
+const $ = (id) => document.getElementById(id);
+const dropzone = $('dropzone');
+const fileinput = $('fileinput');
+const progressPanel = $('progress-panel');
+const progressStepLabel = $('progress-step-label');
+const progressMeta = $('progress-meta');
+const progressBarFill = $('progress-bar-fill');
+const stepsList = $('steps-list');
+const logWindow = $('log-window');
+const errorBanner = $('error-banner');
+const errorMessage = $('error-message');
+const results = $('results');
+const resultsCount = $('results-count');
+const clipGrid = $('clip-grid');
+const videoName = $('video-name');
+const btnExport = $('btn-export');
+const btnNew = $('btn-new');
+const toast = $('toast');
+
+let currentJobId = null;
+let pollTimer = null;
+
+function el(tag, attrs, text) {
+  const e = document.createElement(tag);
+  if (attrs) {
+    for (const k in attrs) {
+      if (k === 'class') e.className = attrs[k];
+      else if (k === 'dataset') {
+        for (const dk in attrs.dataset) e.dataset[dk] = attrs.dataset[dk];
+      } else e.setAttribute(k, attrs[k]);
+    }
+  }
+  if (text != null) e.textContent = text;
+  return e;
+}
+
+function renderSteps(currentStepName) {
+  while (stepsList.firstChild) stepsList.removeChild(stepsList.firstChild);
+  let foundCurrent = false;
+  for (const name of STEPS) {
+    const chip = el('div', { class: 'step-chip' });
+    if (foundCurrent) {
+      // pending state
+    } else if (name === currentStepName) {
+      chip.classList.add('current');
+      foundCurrent = true;
+    } else {
+      chip.classList.add('done');
+    }
+    chip.appendChild(el('span', { class: 'step-chip-dot' }));
+    chip.appendChild(document.createTextNode(name));
+    stepsList.appendChild(chip);
+  }
+}
+
+function showToast(msg) {
+  toast.textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(showToast._t);
+  showToast._t = setTimeout(() => toast.classList.remove('show'), 2400);
+}
+
+function resetUI() {
+  errorBanner.classList.remove('active');
+  results.classList.remove('active');
+  progressPanel.classList.remove('active');
+  while (clipGrid.firstChild) clipGrid.removeChild(clipGrid.firstChild);
+  while (logWindow.firstChild) logWindow.removeChild(logWindow.firstChild);
+  if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
+  currentJobId = null;
+}
+
+async function handleFile(file) {
+  if (!file) return;
+  if (!/^video\//.test(file.type) && !/\.(mp4|mov|mkv|m4v|webm)$/i.test(file.name)) {
+    showToast('Fichier vidéo requis');
+    return;
+  }
+  resetUI();
+  videoName.textContent = '· ' + file.name;
+  progressPanel.classList.add('active');
+  progressStepLabel.textContent = 'Upload de la vidéo…';
+  renderSteps('');
+
+  const fd = new FormData();
+  fd.append('video', file);
+  fd.append('max_clips', $('max-clips').value);
+  fd.append('max_len', $('max-len').value);
+
+  try {
+    const r = await fetch('/upload', { method: 'POST', body: fd });
+    if (!r.ok) {
+      const t = await r.text();
+      throw new Error(t || 'Upload échoué');
+    }
+    const data = await r.json();
+    currentJobId = data.job_id;
+    pollStatus();
+    pollTimer = setInterval(pollStatus, 1500);
+  } catch (e) {
+    showError(e.message);
+  }
+}
+
+async function pollStatus() {
+  if (!currentJobId) return;
+  try {
+    const r = await fetch('/status/' + currentJobId);
+    if (!r.ok) return;
+    const s = await r.json();
+
+    progressBarFill.style.width = s.progress + '%';
+    progressMeta.textContent = s.progress + '% · ' + s.elapsed + 's';
+    progressStepLabel.textContent = s.step;
+    renderSteps(s.step);
+
+    while (logWindow.firstChild) logWindow.removeChild(logWindow.firstChild);
+    for (const line of s.log_tail) {
+      const isHighlight = /✅|⭐|✨|🎯|🎞️/.test(line);
+      const div = el('div', { class: isHighlight ? 'log-line highlight' : 'log-line' }, line);
+      logWindow.appendChild(div);
+    }
+    logWindow.scrollTop = logWindow.scrollHeight;
+
+    if (s.status === 'done') {
+      clearInterval(pollTimer); pollTimer = null;
+      renderClips(s.clips);
+    } else if (s.status === 'error') {
+      clearInterval(pollTimer); pollTimer = null;
+      showError(s.error || 'Erreur inconnue');
+    }
+  } catch (e) {
+    console.warn('poll error', e);
+  }
+}
+
+function renderClips(clips) {
+  resultsCount.textContent = clips.length;
+  while (clipGrid.firstChild) clipGrid.removeChild(clipGrid.firstChild);
+
+  clips.forEach((c, i) => {
+    const card = el('div', { class: 'clip' });
+    card.style.animationDelay = (i * 60) + 'ms';
+    card.style.animation = 'slideIn 0.4s ease-out backwards';
+
+    const fileEnc = encodeURIComponent(c.file);
+    const txtFile = c.file.replace(/\.mp4$/, '.txt');
+    const srtFile = c.file.replace(/\.mp4$/, '.srt');
+
+    // Top meta badges
+    const meta = el('div', { class: 'clip-meta' });
+    meta.appendChild(el('div', { class: 'clip-badge' }, (c.duration || 0).toFixed(0) + 's'));
+    meta.appendChild(el('div', { class: 'clip-badge score' }, (c.score || 0).toFixed(0)));
+    card.appendChild(meta);
+
+    // Video + hook overlay
+    const wrap = el('div', { class: 'clip-video-wrap' });
+    const video = el('video', {
+      src: '/clip/' + currentJobId + '/' + fileEnc,
+      muted: '',
+      loop: '',
+      playsinline: '',
+      preload: 'metadata',
+    });
+    wrap.appendChild(video);
+    const overlay = el('div', { class: 'clip-hook-overlay' });
+    overlay.appendChild(el('div', { class: 'clip-hook' }, c.hook || ''));
+    wrap.appendChild(overlay);
+    card.appendChild(wrap);
+
+    // Info section
+    const info = el('div', { class: 'clip-info' });
+    info.appendChild(el('div', { class: 'clip-caption' }, c.caption || ''));
+
+    const tags = el('div', { class: 'clip-tags' });
+    (c.hashtags || []).slice(0, 4).forEach(t => {
+      tags.appendChild(el('span', { class: 'clip-tag' }, t));
+    });
+    info.appendChild(tags);
+
+    const actions = el('div', { class: 'clip-actions' });
+    const dlMp4 = el('a', {
+      class: 'clip-action',
+      href: '/clip/' + currentJobId + '/' + fileEnc,
+      download: '',
+    }, '↓ MP4');
+    const dlSrt = el('a', {
+      class: 'clip-action',
+      href: '/clip/' + currentJobId + '/' + encodeURIComponent(srtFile),
+      download: '',
+    }, '↓ SRT');
+    const copyBtn = el('button', { class: 'clip-action', type: 'button' }, '⎘ Copier');
+    copyBtn.addEventListener('click', () => {
+      const text = (c.hook || '') + '\n\n' + (c.caption || '') + '\n\n' + ((c.hashtags || []).join(' '));
+      navigator.clipboard.writeText(text).then(() => showToast('Copié !'));
+    });
+    actions.appendChild(dlMp4);
+    actions.appendChild(dlSrt);
+    actions.appendChild(copyBtn);
+    info.appendChild(actions);
+    card.appendChild(info);
+
+    wrap.addEventListener('mouseenter', () => video.play().catch(() => {}));
+    wrap.addEventListener('mouseleave', () => { video.pause(); video.currentTime = 0; });
+
+    clipGrid.appendChild(card);
+  });
+
+  results.classList.add('active');
+  results.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function showError(msg) {
+  errorBanner.classList.add('active');
+  errorMessage.textContent = msg;
+}
+
+// Drag & drop
+['dragenter', 'dragover'].forEach(ev => {
+  dropzone.addEventListener(ev, (e) => {
+    e.preventDefault(); e.stopPropagation();
+    dropzone.classList.add('dragging');
+  });
+});
+['dragleave', 'drop'].forEach(ev => {
+  dropzone.addEventListener(ev, (e) => {
+    e.preventDefault(); e.stopPropagation();
+    dropzone.classList.remove('dragging');
+  });
+});
+dropzone.addEventListener('drop', (e) => {
+  const file = e.dataTransfer.files[0];
+  handleFile(file);
+});
+dropzone.addEventListener('click', () => fileinput.click());
+fileinput.addEventListener('change', (e) => handleFile(e.target.files[0]));
+
+// Window-level dragover prevention (so external drops don't open in browser)
+window.addEventListener('dragover', (e) => e.preventDefault());
+window.addEventListener('drop', (e) => {
+  e.preventDefault();
+  if (e.target.closest && e.target.closest('.dropzone')) return;
+  const file = e.dataTransfer.files[0];
+  if (file) handleFile(file);
+});
+
+btnExport.addEventListener('click', async () => {
+  if (!currentJobId) return;
+  btnExport.disabled = true;
+  btnExport.textContent = 'Export…';
+  try {
+    const r = await fetch('/export/' + currentJobId, { method: 'POST' });
+    const data = await r.json();
+    if (data.path) showToast('Exporté → ' + data.path);
+    else showToast('Export échoué');
+  } catch (e) {
+    showToast('Export échoué : ' + e.message);
+  }
+  btnExport.disabled = false;
+  btnExport.textContent = '↓ Exporter sur le Desktop';
+});
+
+btnNew.addEventListener('click', () => {
+  resetUI();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+</script>
+</body>
+</html>

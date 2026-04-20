@@ -1,0 +1,27 @@
+# Environnements Python
+venv/
+venv312/
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+
+# Sorties pipeline & caches locaux
+reels_output/
+reels_v2_output/
+reels_v3_output/
+transcripts/
+webapp_jobs/
+
+# Audio extrait (fichiers lourds)
+*.wav
+
+# OS / IDE
+.DS_Store
+.idea/
+.vscode/
+
+# Secrets locaux (tokens HF, etc.)
+.env
+.env.*

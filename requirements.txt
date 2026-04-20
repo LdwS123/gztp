@@ -1,0 +1,35 @@
+# ─── Reels Generator — pipeline EN-only ────────────────────────────
+# Le pipeline est verrouillé en anglais (--lang en, modèle small.en
+# par défaut). Si tu veux du multilingue, passe --lang auto + un
+# modèle non-.en (ex: --model small ou large-v3).
+#
+# ─── Core (toujours requis) ────────────────────────────────────────
+faster-whisper>=1.0.0      # transcription Whisper locale (v1)
+clipsai>=0.2.4             # WhisperX + ClipFinder (v2/v3)
+# Modèles Whisper EN-only à pré-télécharger (premier run sinon) :
+#   tiny.en  (~75 MB)  — instantané, faible précision
+#   base.en  (~150 MB) — rapide, OK pour brouillon
+#   small.en (~500 MB) — DÉFAUT, sweet spot vitesse/qualité
+#   medium.en (~1.5 GB) — meilleure précision, ~3x plus lent
+
+# ─── LLM judge local (v3) ──────────────────────────────────────────
+# Ollama lui-même s'installe à part: brew install ollama
+# Puis: ollama pull qwen2.5:7b
+# Aucune lib pip nécessaire — on parle au serveur via urllib stdlib.
+
+# ─── Signaux audio avancés (v3 --all-signals) ──────────────────────
+# Tous OPTIONNELS : si absents, le pipeline les skip avec un warning.
+#
+# librosa = prosodie (pitch, énergie spectrale)
+librosa>=0.10.0
+
+# speechbrain = émotion par seconde (wav2vec2 IEMOCAP)
+# Lourd au premier run (~400MB de poids).
+speechbrain>=1.0.0
+torchaudio>=2.0.0
+torch>=2.0.0
+
+# pyannote-audio = diarisation (qui parle quand)
+# Nécessite un token HuggingFace dans HF_TOKEN
+# + accepter la licence sur https://huggingface.co/pyannote/speaker-diarization-3.1
+pyannote.audio>=3.1.0
